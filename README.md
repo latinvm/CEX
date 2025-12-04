@@ -2,6 +2,14 @@
 
 A PHP class for the CEX.io Spot Trading API: https://trade.cex.io/docs/
 
+## Support This Project
+
+If you find this library useful, consider signing up for CEX.io using my referral link:
+
+**[Sign up for CEX.io](https://cex.io/join?c=4&a=140910&o=2&s=sc&prid=referral-promo)**
+
+It's free and helps support the continued development of this project.
+
 ## Version 2.0
 
 This version has been updated to work with the new CEX.io Spot Trading API. The old API endpoints (`https://cex.io/api`) have been replaced with the new Spot Trading API (`https://trade.cex.io/api/spot/`).
