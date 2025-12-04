@@ -1,0 +1,28 @@
+{
+    "name": "serverdotbiz/cex",
+    "description": "PHP client for CEX.io Spot Trading API",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Roy Boverhof",
+            "email": "roy@server.biz"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "ext-curl": "*",
+        "ext-json": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0 || ^10.0"
+    },
+    "autoload": {
+        "classmap": ["cex.class.php"]
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test-unit": "phpunit --testsuite unit",
+        "test-integration": "phpunit --testsuite integration"
+    }
+}

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         verbose="true"
+         stopOnFailure="false">
+
+    <testsuites>
+        <testsuite name="unit">
+            <file>tests/CEXTest.php</file>
+            <exclude>
+                <class>CEXIntegrationTest</class>
+            </exclude>
+        </testsuite>
+        <testsuite name="integration">
+            <file>tests/CEXTest.php</file>
+            <class>CEXIntegrationTest</class>
+        </testsuite>
+        <testsuite name="all">
+            <file>tests/CEXTest.php</file>
+        </testsuite>
+    </testsuites>
+
+    <coverage>
+        <report>
+            <html outputDirectory="coverage"/>
+            <text outputFile="php://stdout"/>
+        </report>
+        <include>
+            <file>cex.class.php</file>
+        </include>
+    </coverage>
+
+    <php>
+        <!-- Set these environment variables for integration tests -->
+        <!-- <env name="CEX_API_KEY" value="your_api_key"/> -->
+        <!-- <env name="CEX_API_SECRET" value="your_api_secret"/> -->
+    </php>
+</phpunit>
