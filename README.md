@@ -18,6 +18,24 @@ This version has been updated to work with the new CEX.io Spot Trading API. The 
 2. Generate your API key and API secret on https://trade.cex.io/
 3. Include the CEX class in your project
 
+## Testing
+
+### Setup
+
+1. Copy the environment template and add your API credentials:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Edit `.env` with your API keys from https://trade.cex.io/
+
+3. Run tests:
+   ```bash
+   source .env && ./vendor/bin/phpunit tests/CEXTest.php
+   ```
+
+The `.env` file is ignored by git to keep your credentials safe.
+
 ## Quick Start
 
 ```php
@@ -204,13 +222,6 @@ Transfer funds between CEX.io accounts.
 $result = $CEX->internal_transfer('BTC', 0.01, $to_account_id);
 ```
 
-## Deprecated Methods
-
-The following methods are no longer available as GHash.io mining pool has been discontinued:
-
-- `hashrate()` - Returns an error message
-- `workers()` - Returns an error message
-
 ## Symbol Format
 
 The library accepts both old-style (`BTC/USD`) and new-style (`BTC-USD`) symbol formats. They are automatically converted as needed.
@@ -253,13 +264,13 @@ $CEX = new CEX($key, $secret, 'cacert.pem');
 | `order_book($pair, $depth)` | `order_book($pair, $depth)` | Response format similar |
 | `trade_history($pair, $since)` | `trade_history($pair, $since)` | Response format changed |
 | `price_stats(...)` | `candles(...)` | Use candles() instead |
-| `convert($pair, $value)` | `convert($pair, $value)` | Now calculated from ticker |
+| `convert($pair, $value)` | Removed | Use ticker() and calculate manually |
 | `balance()` | `balance()` | Response format changed |
 | `open_orders($pair)` | `open_orders($pair)` | Works the same |
 | `place_order(...)` | `place_order(...)` | Parameter names changed |
 | `cancel_order($id)` | `cancel_order($id)` | Works the same |
-| `hashrate()` | N/A | Deprecated (GHash.io discontinued) |
-| `workers()` | N/A | Deprecated (GHash.io discontinued) |
+| `hashrate()` | Removed | GHash.io discontinued |
+| `workers()` | Removed | GHash.io discontinued |
 
 ### New Methods in v2.0
 

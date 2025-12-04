@@ -1,0 +1,15 @@
+# Environment variables (contains API keys)
+.env
+
+# Composer
+vendor/
+composer.lock
+
+# PHPUnit
+.phpunit.result.cache
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo

@@ -401,44 +401,6 @@ class CEX {
 	}
 
 	/**
-	 * Price Stats (backward compatible - uses candles)
-	 * Returns price statistics for charting
-	 * @param string $symbol_pair Trading pair
-	 * @param int $lastHours Number of hours to look back
-	 * @param int $maxRespArrSize Maximum response array size
-	 * @return array $response_array
-	 * @deprecated Use candles() method instead
-	 */
-	public function price_stats($symbol_pair, $lastHours, $maxRespArrSize) {
-		$from = time() - ($lastHours * 3600);
-		$to = time();
-		return $this->candles($symbol_pair, '1h', $from, $to);
-	}
-
-	/**
-	 * Convert (deprecated)
-	 * This method is no longer available in the new API
-	 * Use ticker to get exchange rate and calculate manually
-	 * @param string $symbol_pair
-	 * @param float $value
-	 * @return array
-	 * @deprecated No longer available in new API
-	 */
-	public function convert($symbol_pair, $value) {
-		$ticker = $this->ticker($symbol_pair);
-		if (isset($ticker['error'])) {
-			return $ticker;
-		}
-		if (isset($ticker['last'])) {
-			return array(
-				'amnt' => floatval($value) * floatval($ticker['last']),
-				'rate' => $ticker['last']
-			);
-		}
-		return array('error' => 'Could not get exchange rate');
-	}
-
-	/**
 	 * Private functions, needs valid API credentials
 	 */
 
@@ -634,23 +596,4 @@ class CEX {
 		));
 	}
 
-	/**
-	 * Hash Rate (deprecated)
-	 * GHash.io mining pool is no longer available
-	 * @return array $response_array
-	 * @deprecated GHash.io has been discontinued
-	 */
-	public function hashrate() {
-		return array('error' => 'GHash.io mining pool has been discontinued. This method is no longer available.');
-	}
-
-	/**
-	 * Workers Hash Rate (deprecated)
-	 * GHash.io mining pool is no longer available
-	 * @return array $response_array
-	 * @deprecated GHash.io has been discontinued
-	 */
-	public function workers() {
-		return array('error' => 'GHash.io mining pool has been discontinued. This method is no longer available.');
-	}
 }
