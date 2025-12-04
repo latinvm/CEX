@@ -1,185 +1,294 @@
-CEX.io PHP API
-===
+# CEX.io PHP API
 
-This is a PHP class that connects to the cex.io API: https://cex.io/api
+A PHP class for the CEX.io Spot Trading API: https://trade.cex.io/docs/
 
-##Usage:
-1. Download the API source
-2. Generate your API key and API secret on https://cex.io/trade/profile
-3. include the CEX class
-4. create a new CEX object, credentials are not needed for public methods
+## Version 2.0
+
+This version has been updated to work with the new CEX.io Spot Trading API. The old API endpoints (`https://cex.io/api`) have been replaced with the new Spot Trading API (`https://trade.cex.io/api/spot/`).
+
+## Requirements
+
+- PHP 7.0 or higher
+- cURL extension enabled
+- OpenSSL extension (for HTTPS)
+
+## Installation
+
+1. Download the API source files
+2. Generate your API key and API secret on https://trade.cex.io/
+3. Include the CEX class in your project
+
+## Quick Start
+
 ```php
 include_once("cex.class.php");
 
-$api_username	= false;	// your CEX username
-$api_key		= false;	// your API key
-$api_secret		= false;	// your API secret
-$api_url		= 'https://cex.io/api';
-$api_cert		= 'cacert.pem';
+// API credentials (optional for public methods)
+$api_key    = 'your_api_key';
+$api_secret = 'your_api_secret';
+$api_cert   = 'cacert.pem';  // Optional: path to CA certificate bundle
 
-$CEX = new CEX($api_username, $api_key, $api_secret, $api_url, $api_cert);
+// Create CEX object
+$CEX = new CEX($api_key, $api_secret, $api_cert);
 
-$last_price = $CEX->last_price('BTC/USD');
-var_dump($last_price);
-```
-
-##Public Methods and examples
-These calls don't require any API credentials
-```php
-/**
-* symbols
-* Returns an array of available symbol pairs
-* @return array $symbols_pair
-*/
-$symbols = $CEX->symbols();
-var_dump($symbols);
-
-/**
-* Ticker
-* Get the symbols ticker
-* @param string $symbol_pair
-* @return array $response_array
-*
-*  Returns JSON dictionary:
-*		last - last BTC price
-*		high - last 24 hours price high
-*		low - last 24 hours price low
-*		volume - last 24 hours volume
-*		bid - highest buy order
-*		ask - lowest sell order
-*/
+// Public method example
 $ticker = $CEX->ticker('BTC/USD');
 var_dump($ticker);
 
-/**
-* Last Price
-* Last Price for each trading pair will be defined as price of the last executed order for this pair.
-* @param string $symbol_pair
-* @return array $response_array
-*/
-$last_price = $CEX->last_price('BTC/USD');
-var_dump($last_price);
-
-/**
-* Converter
-* Converts any amount of the currency to any other currency by multiplying the amount by the last price of the chosen pair according to the current exchange rate.
-* @param string $symbol_pair
-* @return array $response_array
-*/
-$convert = $CEX->convert('BTC/USD',1.0);
-var_dump($convert);
-
-/**
-* Chart
-* Allows building price change charts (daily, weekly, monthly) and showing historical point in any point of the chart
-* @param int $lastHours
-* @param int $maxRespArrSize
-* @return array $response_array
-*/
-$price_stats = $CEX->price_stats('BTC/USD', 24, 10);
-var_dump($price_stats);
-
-/**
-* Order Book
-* Returns JSON dictionary with "bids" and "asks". Each is a list of open orders and each order is represented as a list of price and amount.
-* @param int $depth - limit the number of bid/ask records returned (optional)
-* @return array $response_array
-*/
-$order_book = $CEX->order_book('BTC/USD', false);
-var_dump($order_book);
-
-/**
-* Trade history
-* @param int $since - return trades with tid >= since
-* @return array $response_array
-*
-* Returns a list of recent trades, where each trade is a JSON dictionary:
-*		tid - trade id
-*		amount - trade amount
-*		date - UNIX timestamp
-*/
-$trade_history = $CEX->trade_history('BTC/USD', 135039);
-var_dump($trade_history);
-```
-
-##Private Methods and examples
-These calls require valid API credentials
-```php
-/**
-* Balance
-* @return array $response_array
-*
-* Returns JSON dictionary:
-*		available - available balance
-*		orders - balance in pending orders
-*		bonus - referral program bonus
-*/
+// Private method example (requires API credentials)
 $balance = $CEX->balance();
 var_dump($balance);
-
-/**
-* Place order
-* @param string type - 'buy' or 'sell'
-* @param float amount
-* @param float price
-* @return array $response_array
-*
-* Returns JSON dictionary representing order:
-*		id - order id
-*		time - timestamp
-*		type - buy or sell
-*		price - price
-*		amount - amount
-*		pending - pending amount (if partially executed)
-*/
-$place_order = $CEX->place_order('GHS/BTC','buy',1,0.0001);
-var_dump($place_order);
-
-/**
-* Open orders
-* @return array $response_array
-*
-* Returns JSON list of open orders. Each order is represented as dictionary:
-*		id - order id
-*		time - timestamp
-*		price - price
-*		amount - amount
-*		pending - pending amount (if partially executed)
-*/
-$open_orders = $CEX->open_orders('GHS/BTC');
-var_dump($open_orders);
-
-/**
-* Cancel order
-* @param int $id - order id
-* @return bool
-*
-*/
-$id = $place_order['id'];
-$cancel_order = $CEX->cancel_order($id);
-var_dump($cancel_order);
-if ($cancel_order){
-echo 'Order was cancelled'."\n";
-} else {
-echo 'Error cancelling order'."\n";
-}
-
-$open_orders = $CEX->open_orders('GHS/BTC');
-var_dump($open_orders);
-
-/**
-* Hash Rate
-* Returns overall hash rate in MH/s.
-* @return array $response_array
-*/
-$hashrate = $CEX->hashrate();
-var_dump($hashrate);
-
-/**
-* Workers Hash Rate
-* Returns workers' hash rate and rejected shares.
-* @return array $response_array
-*/
-$workers = $CEX->workers();
-var_dump($workers);
 ```
+
+## Public Methods
+
+These methods don't require API credentials.
+
+### Server Time
+```php
+$server_time = $CEX->server_time();
+```
+
+### Pairs Info
+Returns information about all available trading pairs.
+```php
+$pairs = $CEX->pairs_info();
+```
+
+### Symbols
+Returns an array of available symbol pairs (backward compatible).
+```php
+$symbols = $CEX->symbols();
+// Returns: ['BTC/USD', 'ETH/USD', ...]
+```
+
+### Currencies Info
+Returns information about all available currencies.
+```php
+$currencies = $CEX->currencies_info();
+```
+
+### Ticker
+Get market data for a trading pair.
+```php
+$ticker = $CEX->ticker('BTC/USD');
+// Returns: ['last', 'high', 'low', 'volume', 'bid', 'ask', 'pair', 'raw']
+```
+
+### Multiple Tickers
+Get ticker data for multiple pairs at once.
+```php
+$tickers = $CEX->tickers(['BTC/USD', 'ETH/USD']);
+```
+
+### Last Price
+Get the last trade price for a trading pair.
+```php
+$last_price = $CEX->last_price('BTC/USD');
+// Returns: ['lprice', 'pair']
+```
+
+### Order Book
+Get the order book with bids and asks.
+```php
+// Full order book
+$order_book = $CEX->order_book('BTC/USD');
+
+// Limited depth
+$order_book = $CEX->order_book('BTC/USD', 10);
+```
+
+### Trade History
+Get recent trades for a trading pair.
+```php
+$trades = $CEX->trade_history('BTC/USD');
+
+// With since parameter
+$trades = $CEX->trade_history('BTC/USD', $since_trade_id);
+```
+
+### Candles (OHLCV)
+Get candlestick/kline data for charting.
+```php
+$from = time() - (24 * 3600);
+$to = time();
+$candles = $CEX->candles('BTC/USD', '1h', $from, $to);
+// Resolutions: 1m, 5m, 15m, 30m, 1h, 4h, 1d, 1w
+```
+
+## Private Methods
+
+These methods require valid API credentials.
+
+### Balance
+Get account balances for all currencies.
+```php
+$balance = $CEX->balance();
+```
+
+### My Fee
+Get the current trading fee for a pair.
+```php
+$fee = $CEX->my_fee('BTC/USD');
+```
+
+### My Orders
+Get orders based on filter criteria.
+```php
+// All open orders for a pair
+$orders = $CEX->my_orders('BTC/USD', 'open', 100);
+
+// Status options: 'open', 'closed', 'canceled', 'all'
+```
+
+### Open Orders (backward compatible)
+Get list of open orders for a trading pair.
+```php
+$open_orders = $CEX->open_orders('BTC/USD');
+```
+
+### Place Order
+Create a new limit order.
+```php
+$order = $CEX->place_order('BTC/USD', 'buy', 0.001, 50000);
+// Parameters: pair, type (buy/sell), amount, price
+```
+
+### Place Market Order
+Create a market order.
+```php
+$order = $CEX->place_market_order('BTC/USD', 'buy', 0.001);
+// Parameters: pair, type (buy/sell), amount
+```
+
+### Cancel Order
+Cancel an existing order.
+```php
+$result = $CEX->cancel_order($order_id);
+// Returns: true on success, false on failure
+```
+
+### Cancel All Orders
+Cancel all open orders.
+```php
+// Cancel all orders for a specific pair
+$result = $CEX->cancel_all_orders('BTC/USD');
+
+// Cancel all orders for all pairs
+$result = $CEX->cancel_all_orders();
+```
+
+### Transaction History
+Get ledger/transaction history.
+```php
+$history = $CEX->transaction_history('BTC', 100);
+// Parameters: currency (optional), limit
+```
+
+### Funding History
+Get deposit/withdrawal history.
+```php
+$history = $CEX->funding_history('BTC', 100);
+// Parameters: currency (optional), limit
+```
+
+### Deposit Address
+Get deposit address for a currency.
+```php
+$address = $CEX->deposit_address('BTC');
+```
+
+### Internal Transfer
+Transfer funds between CEX.io accounts.
+```php
+$result = $CEX->internal_transfer('BTC', 0.01, $to_account_id);
+```
+
+## Deprecated Methods
+
+The following methods are no longer available as GHash.io mining pool has been discontinued:
+
+- `hashrate()` - Returns an error message
+- `workers()` - Returns an error message
+
+## Symbol Format
+
+The library accepts both old-style (`BTC/USD`) and new-style (`BTC-USD`) symbol formats. They are automatically converted as needed.
+
+## Error Handling
+
+All methods return an array. Check for errors by looking for the `error` key:
+
+```php
+$result = $CEX->ticker('BTC/USD');
+if (isset($result['error'])) {
+    echo "Error: " . $result['error'];
+} else {
+    echo "Last price: " . $result['last'];
+}
+```
+
+## Migration from v1.x
+
+### Constructor Changes
+
+Old:
+```php
+$CEX = new CEX($username, $key, $secret, 'https://cex.io/api', 'cacert.pem');
+```
+
+New:
+```php
+$CEX = new CEX($key, $secret, 'cacert.pem');
+// Note: username is no longer required
+```
+
+### Method Changes
+
+| Old Method | New Method | Notes |
+|------------|------------|-------|
+| `symbols()` | `symbols()` | Now fetches dynamically from API |
+| `ticker($pair)` | `ticker($pair)` | Response format changed |
+| `last_price($pair)` | `last_price($pair)` | Response format changed |
+| `order_book($pair, $depth)` | `order_book($pair, $depth)` | Response format similar |
+| `trade_history($pair, $since)` | `trade_history($pair, $since)` | Response format changed |
+| `price_stats(...)` | `candles(...)` | Use candles() instead |
+| `convert($pair, $value)` | `convert($pair, $value)` | Now calculated from ticker |
+| `balance()` | `balance()` | Response format changed |
+| `open_orders($pair)` | `open_orders($pair)` | Works the same |
+| `place_order(...)` | `place_order(...)` | Parameter names changed |
+| `cancel_order($id)` | `cancel_order($id)` | Works the same |
+| `hashrate()` | N/A | Deprecated (GHash.io discontinued) |
+| `workers()` | N/A | Deprecated (GHash.io discontinued) |
+
+### New Methods in v2.0
+
+- `server_time()` - Get server timestamp
+- `pairs_info()` - Get detailed pair information
+- `currencies_info()` - Get currency information
+- `tickers($pairs)` - Get multiple tickers at once
+- `candles($pair, $resolution, $from, $to)` - Get OHLCV data
+- `my_fee($pair)` - Get trading fee
+- `my_orders($pair, $status, $limit)` - Get orders with filters
+- `place_market_order($pair, $type, $amount)` - Place market order
+- `cancel_all_orders($pair)` - Cancel all orders
+- `transaction_history($currency, $limit)` - Get transaction history
+- `funding_history($currency, $limit)` - Get funding history
+- `deposit_address($currency)` - Get deposit address
+- `internal_transfer($currency, $amount, $to)` - Internal transfer
+
+## API Documentation
+
+For complete API documentation, visit: https://trade.cex.io/docs/
+
+## License
+
+MIT License - see LICENSE file for details.
+
+## Author
+
+Roy Boverhof - https://twitter.com/Boverhof
+
+## Contributing
+
+Contributions are welcome! Please submit pull requests to the GitHub repository.
